@@ -1,39 +1,16 @@
 {
-  "version": 2,
-  "name": "cyber-divination",
-  "builds": [
+  "rewrites": [
     {
-      "src": "*.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/zb",
-      "dest": "/占卜页面-付费完整版.html"
+      "source": "/zb",
+      "destination": "/paid.html"
     },
     {
-      "src": "/free",
-      "dest": "/占卜页面-免费体验版.html"
+      "source": "/free",
+      "destination": "/free-trial.html"
     },
     {
-      "src": "/test",
-      "dest": "/占卜页面-测试版.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
-      ]
+      "source": "/ultimate",
+      "destination": "/ultimate.html"
     }
   ]
 }
