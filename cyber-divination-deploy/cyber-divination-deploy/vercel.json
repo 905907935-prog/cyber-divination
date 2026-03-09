@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/zb",
+      "destination": "/paid.html"
+    },
+    {
+      "source": "/free",
+      "destination": "/free-trial.html"
+    },
+    {
+      "source": "/ultimate",
+      "destination": "/ultimate.html"
+    }
+  ]
+}

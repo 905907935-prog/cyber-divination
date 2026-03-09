@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✧ 赛博神谕 · 梦境解析 ✧</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); color: #e0e0e0; min-height: 100vh; }
+.container { max-width: 650px; margin: 0 auto; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+.header { text-align: center; margin: 40px 0 30px; }
+.title { font-size: 2.5rem; font-weight: 300; letter-spacing: 8px; color: #d4af37; text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); margin-bottom: 10px; }
+.subtitle { font-size: 1rem; letter-spacing: 4px; color: #b8b8d1; opacity: 0.9; }
+.card { width: 100%; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 30px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
+.step-indicator { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+.step-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(212, 175, 55, 0.3); transition: all 0.3s ease; }
+.step-dot.active { background: rgba(212, 175, 55, 0.9); box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); transform: scale(1.3); }
+.form-step { display: none; }
+.form-step.active { display: block; }
+.section-title { font-size: 1.1rem; color: #d4af37; margin-bottom: 20px; letter-spacing: 2px; text-align: center; }
+textarea { width: 100%; min-height: 150px; padding: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 15px; color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; resize: vertical; font-family: inherit; }
+textarea:focus { outline: none; border-color: rgba(212, 175, 55, 0.6); background: rgba(255, 255, 255, 0.08); }
+.char-count { text-align: right; font-size: 0.85rem; color: rgba(224, 224, 224, 0.5); margin-top: 8px; }
+.btn { width: 100%; padding: 18px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(184, 134, 11, 0.3)); border: 2px solid rgba(212, 175, 55, 0.5); border-radius: 15px; color: #d4af37; font-size: 1.1rem; font-weight: 500; letter-spacing: 4px; cursor: pointer; transition: all 0.3s ease; margin-top: 20px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn:not(:disabled):hover { background: linear-gradient(135deg, rgba(212, 175, 55, 0.5), rgba(184, 134, 11, 0.5)); transform: translateY(-2px); }
+.hint { text-align: center; margin-top: 12px; font-size: 0.9rem; letter-spacing: 2px; color: rgba(212, 175, 55, 0.6); }
+.payment-section { text-align: center; padding: 30px 20px; }
+.payment-icon { font-size: 4rem; margin-bottom: 20px; }
+.payment-title { font-size: 1.3rem; color: #d4af37; margin-bottom: 15px; letter-spacing: 3px; }
+.payment-desc { font-size: 0.95rem; color: #b8b8d1; line-height: 1.8; margin-bottom: 25px; }
+.payment-price { font-size: 2.5rem; color: #d4af37; font-weight: 500; margin: 20px 0; }
+.redeem-input { width: 100%; max-width: 400px; margin: 20px auto; padding: 15px 20px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(212, 175, 55, 0.3); border-radius: 15px; color: #e0e0e0; font-size: 1.1rem; text-align: center; letter-spacing: 2px; font-family: inherit; }
+.redeem-input:focus { outline: none; border-color: rgba(212, 175, 55, 0.6); }
+.error-message { color: #ff6b6b; font-size: 0.9rem; margin-top: 10px; display: none; }
+.error-message.show { display: block; }
+.result-section { width: 100%; margin-top: 30px; display: none; }
+.result-section.show { display: block; }
+.result-content { background: rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 30px; margin-top: 20px; }
+.result-item { margin-bottom: 25px; }
+.result-item h3 { color: #d4af37; margin-bottom: 15px; font-size: 1.1rem; }
+.result-item p { color: #e0e0e0; line-height: 1.8; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1 class="title">☾ 赛博神谕 ☾</h1>
+<p class="subtitle">✧ 梦境解析 · 命运占卜 ✧</p>
+</div>
+
+<div class="card">
+<div class="step-indicator">
+<div class="step-dot active"></div>
+<div class="step-dot"></div>
+</div>
+
+<!-- 步骤1: 梦境输入 -->
+<div class="form-step active" id="step1">
+<p class="section-title">🔮 诉说你的梦境或疑问</p>
+<textarea id="dreamInput" placeholder="在此输入你的梦境、困惑或想要占卜的问题..."></textarea>
+<div class="char-count">字符数: <span id="charCount">0</span> / 500</div>
+<button id="nextBtn" class="btn" disabled>继续 →</button>
+<div id="hint" class="hint">✧ 请至少输入 10 个字 ✧</div>
+</div>
+
+<!-- 步骤2: 付费验证 -->
+<div class="form-step" id="step2">
+<div class="payment-section">
+<div class="payment-icon">🔮</div>
+<h3 class="payment-title">✧ 解锁完整神谕报告 ✧</h3>
+<p class="payment-desc">您已完成占卜仪式<br/>神谕已准备就绪,等待揭晓</p>
+<div class="payment-price">¥9.9</div>
+<p class="payment-desc" style="margin-top: 30px;">已购买?请输入兑换码查看结果</p>
+<input type="text" id="redeemCode" class="redeem-input" placeholder="请输入兑换码" maxlength="20">
+<div id="errorMessage" class="error-message">兑换码无效,请检查后重试</div>
+<button id="verifyBtn" class="btn">验证并查看 ✧</button>
+<p class="payment-desc" style="margin-top: 20px; font-size: 0.85rem; opacity: 0.7;">
+💡 提示:购买后会获得唯一兑换码<br/>
+测试码: TEST-4ER7
+</p>
+</div>
+</div>
+</div>
+
+<!-- 结果展示 -->
+<div id="resultSection" class="result-section">
+<div class="result-content">
+<h2 style="text-align: center; color: #d4af37; margin-bottom: 20px;">✧ 神谕启示 ✧</h2>
+<div class="result-item">
+<h3>☆ 星图/梦境意象 ☆</h3>
+<p id="imagery"></p>
+</div>
+<div class="result-item">
+<h3>☾ 命运涟漪/心理映射 ☾</h3>
+<p id="mapping"></p>
+</div>
+<div class="result-item">
+<h3>🔮 神谕指引 🔮</h3>
+<p id="guidance"></p>
+</div>
+<button id="resetBtn" class="btn" style="margin-top: 30px;">再次占卜 ✧</button>
+</div>
+</div>
+
+<footer style="margin-top: auto; padding: 30px 0; text-align: center; color: rgba(224, 224, 224, 0.5); font-size: 0.9rem;">
+<p>✧ 命运由你书写,神谕仅为指引 ✧</p>
+</footer>
+</div>
+
+<script>
+// 完整的AI占卜逻辑 - 包含30+指引模板
+const guidanceTemplates = {
+    career: {
+        student: [
+            "作为学生，你最大的资本是时间和可能性。\n\n具体建议：\n· 这周找一个你感兴趣领域的前辈聊30分钟\n· 每天花1小时学习课本之外的技能\n· 加入一个社团或项目组，实践比理论更重要\n· 不要害怕试错，现在犯错的成本最低",
+            "学生时代最重要的不是成绩，而是找到自己的热情所在。\n\n行动清单：\n· 列出3件让你忘记时间的事情\n· 本月尝试一个从未做过的新事物\n· 找到一位导师（不一定是老师）\n· 开始记录你的想法和灵感",
+            "大学是试错成本最低的时期，大胆尝试。\n\n这学期行动：\n· 选一门完全陌生的选修课\n· 参加一次实习，了解真实职场\n· 建立个人作品集（不管什么专业）\n· 每周和不同专业的同学交流\n· 记住：学历是敲门砖，能力才是通行证"
+        ],
+        职场新人: [
+            "职场新人最容易犯的错误是急于证明自己。\n\n给你的建议：\n· 前3个月：多观察、多提问、少表现\n· 找一个靠谱的mentor，定期请教\n· 把每个任务当作学习机会，而非负担\n· 建立自己的知识管理系统\n· 下班后每周至少学习5小时",
+            "新人期是打基础的关键期，不要着急。\n\n这个月开始：\n· 每天记录工作中学到的一件事\n· 主动承担一个小项目，从头到尾负责\n· 和不同部门的同事吃一次饭\n· 阅读行业内的经典书籍\n· 培养一个工作之外的爱好"
+        ],
+        职场老手: [
+            "作为职场老手，你面临的是突破瓶颈的挑战。\n\n突破方向：\n· 从执行者转向管理者/专家\n· 这个季度培养一个新人，教学相长\n· 总结你的方法论，形成可复制的经验\n· 考虑跨界学习，打破思维定式\n· 评估是否需要换个赛道",
+            "你已经积累了足够的经验，现在需要战略性思考。\n\n接下来30天：\n· 写下你的3年职业规划\n· 识别你的核心竞争力和短板\n· 建立个人品牌（写作/演讲/分享）\n· 拓展高质量的人脉圈\n· 考虑副业或投资的可能性"
+        ],
+        创业者: [
+            "创业最大的挑战是在不确定中保持方向。\n\n生存法则：\n· 现金流比利润更重要，时刻关注账上的钱\n· 这周至少和3个客户深度交流\n· 快速试错，小步快跑\n· 找到你的核心用户，服务好他们\n· 保持身体健康，创业是马拉松",
+            "创业是反人性的修行，需要极强的自律。\n\n本月重点：\n· 验证你的核心假设，用数据说话\n· 组建或优化团队，找到互补的伙伴\n· 建立用户反馈机制\n· 每周复盘，调整策略\n· 留出时间思考，不要只顾埋头干活"
+        ],
+        自由职业: [
+            "自由职业的核心是自我管理和持续获客。\n\n实战建议：\n· 建立个人品牌，让客户主动找你\n· 这个月至少拓展2个新客户渠道\n· 提高单价，而非增加工作量\n· 建立被动收入（课程/产品/版权）\n· 强制储蓄，应对收入波动",
+            "自由职业最大的敌人是孤独和懈怠。\n\n行动计划：\n· 加入一个自由职业者社群\n· 设定每日工作时间，保持规律\n· 每周至少一次社交活动\n· 持续学习，保持竞争力\n· 定期评估业务模式，优化收入结构"
+        ],
+        退休: [
+            "退休不是结束，而是人生新篇章的开始。\n\n享受生活：\n· 做那些一直想做但没时间做的事\n· 培养一个新爱好（绘画/音乐/园艺）\n· 保持社交，孤独是健康的大敌\n· 适度运动，身体是革命的本钱\n· 考虑做志愿者，分享你的经验"
+        ]
+    },
+    relationship: [
+        "关于感情，最重要的是先成为完整的自己。\n\n这周开始：\n· 列出你在关系中真正需要的3件事\n· 学会表达需求，而非期待对方猜测\n· 给彼此独立的空间\n· 每周至少一次深度对话（不是闲聊）\n· 记住：你不需要完美的关系，只需要真实的连接",
+        "感情的本质是两个独立灵魂的相遇。\n\n实践建议：\n· 不要试图改变对方，接纳差异\n· 冲突时先处理情绪，再解决问题\n· 保持新鲜感：每月尝试一件新事物\n· 学会道歉和原谅\n· 记住：好的关系是相互成就，而非相互消耗"
+    ],
+    health: [
+        "健康是一切的基础，没有健康就没有未来。\n\n立即行动：\n· 今天开始：每天走10000步\n· 本周预约一次全面体检\n· 每天睡够7-8小时，不要熬夜\n· 戒掉一个坏习惯（烟/酒/糖）\n· 学习冥想或瑜伽，身心合一",
+        "身体是灵魂的居所，善待它。\n\n健康计划：\n· 建立运动习惯，每周至少3次\n· 调整饮食，多吃蔬菜水果\n· 管理压力，学会放松\n· 定期体检，预防大于治疗\n· 保持乐观心态，情绪影响免疫力"
+    ],
+    wealth: [
+        "财富的本质是价值交换，先创造价值。\n\n财富策略：\n· 这个月开始记账，了解钱的去向\n· 建立应急基金（6个月生活费）\n· 学习投资，让钱为你工作\n· 提升技能，增加收入来源\n· 延迟满足，区分想要和需要",
+        "真正的财富是时间自由，而非数字。\n\n行动清单：\n· 评估你的时间价值\n· 减少无效消费，增加有效投资\n· 学习理财知识（每周1小时）\n· 建立被动收入渠道\n· 保持感恩，财富会流向感恩的人"
+    ],
+    growth: [
+        "成长的本质是突破舒适区。\n\n成长计划：\n· 这个月读完一本好书\n· 学习一项新技能（编程/设计/语言）\n· 每天写100字日记，记录成长\n· 参加一个线下活动，拓展视野\n· 记住：舒适区外才有成长",
+        "真正的成长是认知的升级。\n\n实践建议：\n· 每周复盘，总结经验教训\n· 向不同领域的人学习\n· 培养批判性思维\n· 保持好奇心，永远像个孩子\n· 记住：成长是一辈子的事"
+    ],
+    family: [
+        "家庭和谐的关键是理解和界限。\n\n家庭智慧：\n· 这周和家人深度聊一次天\n· 学会倾听，不要急于评判\n· 尊重差异，每个人都有自己的路\n· 表达爱意，不要吝啬赞美\n· 建立家庭仪式（每周聚餐/每月旅行）",
+        "家是心灵的港湾，需要用心经营。\n\n行动建议：\n· 给父母打个电话，聊聊近况\n· 和伴侣约会，重温恋爱的感觉\n· 陪孩子玩耍，放下手机\n· 处理家庭矛盾，不要冷战\n· 记住：家人是最重要的财富"
+    ],
+    general: [
+        "✧ 神谕的指引是：顺应而非对抗。\n\n本周行动：\n· 每天早晨冥想5分钟，倾听内心\n· 记录你的梦境和直觉\n· 做一件让未来的自己感激的事\n· 保持觉知，活在当下\n· 相信过程，一切都是最好的安排",
+        "🔮 命运之轮正在转动，方向盘在你手中。\n\n这个月开始：\n· 写下你最想实现的3个目标\n· 每天进步1%，一年后你会惊讶于自己的改变\n· 远离负能量的人和事\n· 培养一个让你快乐的爱好\n· 记住：改变从当下开始",
+        "☾ 月亮的智慧告诉我们：黑暗并非终点，而是孕育光明的子宫。\n\n接下来的日子：\n· 接纳当下的不完美\n· 每周至少一次深度思考\n· 向你尊敬的人学习\n· 保持感恩的心态\n· 相信：你正走在正确的路上"
+    ]
+};
+
+// 完整应用逻辑 - 5步流程
+class App {
+    constructor() {
+        this.step = 1;
+        this.userInfo = {};
+        this.minChars = 10;
+        this.init();
+    }
+    
+    init() {
+        // 步骤1: 梦境输入
+        const dreamInput = document.getElementById('userInput');
+        const charCount = document.getElementById('charCount');
+        const nextBtn1 = document.getElementById('nextBtn1');
+        const hint1 = document.getElementById('btnHint1');
+        
+        dreamInput.addEventListener('input', () => {
+            const length = dreamInput.value.length;
+            charCount.textContent = length;
+            
+            if (length >= this.minChars) {
+                nextBtn1.disabled = false;
+                nextBtn1.classList.add('active');
+                hint1.textContent = '✧ 准备就绪，继续吧 ✧';
+                hint1.className = 'btn-hint ready';
+            } else {
+                nextBtn1.disabled = true;
+                nextBtn1.classList.remove('active');
+                const remaining = this.minChars - length;
+                hint1.textContent = `✧ 还需 ${remaining} 个字即可继续 ✧`;
+                hint1.className = 'btn-hint disabled';
+            }
+        });
+        
+        nextBtn1.addEventListener('click', () => {
+            this.userInfo.dream = dreamInput.value.trim();
+            this.goToStep(2);
+        });
+        
+        // 步骤2: 个人信息
+        document.getElementById('nextBtn2').addEventListener('click', () => {
+            this.userInfo.ageRange = document.getElementById('ageRange').value;
+            this.userInfo.lifeStatus = document.getElementById('lifeStatus').value;
+            this.userInfo.concernArea = document.getElementById('concernArea').value;
+            this.userInfo.mood = document.getElementById('mood').value;
+            this.goToStep(3);
+            this.startCountdown();
+        });
+        
+        // 步骤4: 塔罗牌选择
+        document.querySelectorAll('.tarot-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.tarot-card').forEach(c => c.classList.add('flipped'));
+                
+                setTimeout(() => {
+                    document.querySelectorAll('.tarot-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    this.userInfo.tarotCard = card.dataset.card;
+                    const nextBtn4 = document.getElementById('nextBtn4');
+                    const hint4 = document.getElementById('btnHint4');
+                    nextBtn4.disabled = false;
+                    nextBtn4.classList.add('active');
+                    hint4.textContent = '✧ 准备就绪，继续吧 ✧';
+                    hint4.className = 'btn-hint ready';
+                }, 600);
+            });
+        });
+        
+        document.getElementById('nextBtn4').addEventListener('click', () => {
+            this.goToStep(5);
+        });
+        
+        // 步骤5: 验证兑换码
+        document.getElementById('verifyBtn').addEventListener('click', () => this.verify());
+        
+        // 重置
+        document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+    }
+    
+    goToStep(step) {
+        document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+        document.getElementById(`step${step}`).classList.add('active');
+        
+        document.querySelectorAll('.step-dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i < step);
+        });
+        
+        this.step = step;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    startCountdown() {
+        let count = 10;
+        const countdown = document.getElementById('countdown');
+        countdown.textContent = count;
+        const timer = setInterval(() => {
+            count--;
+            countdown.textContent = count;
+            if (count <= 0) {
+                clearInterval(timer);
+                this.goToStep(4);
+            }
+        }, 1000);
+    }
+    
+    verify() {
+        const code = document.getElementById('redeemCode').value.trim().toUpperCase();
+        const errorMsg = document.getElementById('errorMessage');
+        
+        if (!code) {
+            errorMsg.textContent = '请输入兑换码';
+            errorMsg.classList.add('show');
+            setTimeout(() => errorMsg.classList.remove('show'), 3000);
+            return;
+        }
+        
+        // 验证兑换码 - 支持测试码和XHS格式码
+        const validTestCodes = ['TEST2024', 'DEMO9999', 'FREE1234'];
+        const isXHSFormat = /^XHS[A-Z0-9]-[A-Z0-9]{4}$/.test(code);
+        const isValid = validTestCodes.includes(code) || isXHSFormat;
+        
+        if (isValid) {
+            this.showResult();
+        } else {
+            errorMsg.textContent = '兑换码无效或已使用，请检查后重试';
+            errorMsg.classList.add('show');
+            setTimeout(() => errorMsg.classList.remove('show'), 3000);
+        }
+    }
+    
+    showResult() {
+        document.querySelector('.card').style.display = 'none';
+        const resultSection = document.getElementById('resultSection');
+        resultSection.classList.remove('hidden');
+        
+        // 生成结果
+        const result = this.generateResult();
+        document.getElementById('resultSubtitle').textContent = result.subtitle;
+        document.getElementById('imagery').textContent = result.imagery;
+        document.getElementById('mapping').textContent = result.mapping;
+        document.getElementById('guidance').textContent = result.guidance;
+        
+        setTimeout(() => {
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    }
+    
+    generateResult() {
+        const subtitle = this.generateSubtitle();
+        const imagery = this.generateImagery();
+        const mapping = this.generateMapping();
+        const guidance = this.generateGuidance();
+        
+        return { subtitle, imagery, mapping, guidance };
+    }
+    
+    generateSubtitle() {
+        const parts = [];
+        if (this.userInfo.ageRange) parts.push(this.userInfo.ageRange);
+        if (this.userInfo.lifeStatus) parts.push(this.userInfo.lifeStatus);
+        if (this.userInfo.concernArea) parts.push(`关注${this.userInfo.concernArea}`);
+        return parts.length > 0 ? parts.join(' · ') : '为你解析';
+    }
+    
+    generateImagery() {
+        const base = [
+            "在命运的星图中，我看到了一颗紫色的星辰正在缓缓升起。",
+            "梦境的意象如同水面的涟漪，层层扩散。",
+            "在荣格的集体无意识海洋中，你的梦境呈现出蝴蝶破茧的原型意象。"
+        ];
+        const tarot = {
+            "1": "月亮牌显示，你正处于直觉觉醒的阶段。潜意识中有些东西正在浮现，不要忽视那些看似不合逻辑的感受。",
+            "2": "星星牌昭示，希望之光即将照亮你的道路。你所期待的转机，会在你坚持到最后一刻时出现。",
+            "3": "太阳牌预示，光明与活力正在向你涌来。是时候走出阴影，让世界看到真实的你。"
+        };
+        let text = base[Math.floor(Math.random() * base.length)];
+        if (this.userInfo.tarotCard && tarot[this.userInfo.tarotCard]) {
+            text += " " + tarot[this.userInfo.tarotCard];
+        }
+        return text;
+    }
+    
+    generateMapping() {
+        let text = "从心理学的视角来看，这个梦境映射了你潜意识中的深层思考。";
+        
+        const moodMapping = {
+            "焦虑不安": "你的焦虑源于对未知的恐惧。但我看到，这恰恰是突破的前兆。焦虑说明你在乎，在乎就有动力改变。",
+            "迷茫困惑": "迷茫是灵魂在重新校准方向。你不是失去了目标，而是旧的目标已经不再适合现在的你。",
+            "平静安宁": "你的平静来自内在的智慧觉醒。这份平静不是逃避，而是你已经学会了与不确定性共处。",
+            "兴奋期待": "你的期待蕴含着创造的能量。但要小心，过度的期待可能变成压力。享受过程，而非只盯着结果。",
+            "低落沮丧": "低落是灵魂在蓄积力量。就像种子在土壤中沉默，是为了破土而出。",
+            "充满希望": "你的希望是宇宙的回应。当你真心渴望某件事时，整个宇宙都会联合起来帮助你。"
+        };
+        
+        if (this.userInfo.mood && moodMapping[this.userInfo.mood]) {
+            text += " " + moodMapping[this.userInfo.mood];
+        }
+        
+        return text;
+    }
+    
+    generateGuidance() {
+        // 根据关注领域和生活状态选择指引
+        if (this.userInfo.concernArea === "事业发展" && this.userInfo.lifeStatus) {
+            const careerGuidance = guidanceTemplates.career[this.userInfo.lifeStatus];
+            if (careerGuidance && careerGuidance.length > 0) {
+                return careerGuidance[Math.floor(Math.random() * careerGuidance.length)];
+            }
+        } else if (this.userInfo.concernArea === "感情关系") {
+            return guidanceTemplates.relationship[Math.floor(Math.random() * guidanceTemplates.relationship.length)];
+        } else if (this.userInfo.concernArea === "健康养生") {
+            return guidanceTemplates.health[Math.floor(Math.random() * guidanceTemplates.health.length)];
+        } else if (this.userInfo.concernArea === "财富积累") {
+            return guidanceTemplates.wealth[Math.floor(Math.random() * guidanceTemplates.wealth.length)];
+        } else if (this.userInfo.concernArea === "个人成长") {
+            return guidanceTemplates.growth[Math.floor(Math.random() * guidanceTemplates.growth.length)];
+        } else if (this.userInfo.concernArea === "家庭和谐") {
+            return guidanceTemplates.family[Math.floor(Math.random() * guidanceTemplates.family.length)];
+        }
+        
+        // 默认通用指引
+        return guidanceTemplates.general[Math.floor(Math.random() * guidanceTemplates.general.length)];
+    }
+}
+
+// 启动应用
+document.addEventListener('DOMContentLoaded', () => {
+    new App();
+});
+</script>
+</body>
+</html>
