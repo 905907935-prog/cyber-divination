@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✧ 赛博神谕 · 免费体验 ✧</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); color: #e0e0e0; min-height: 100vh; padding: 20px; }
+.container { max-width: 650px; margin: 0 auto; }
+.header { text-align: center; margin: 40px 0 30px; }
+.title { font-size: 2.5rem; font-weight: 300; letter-spacing: 8px; color: #d4af37; text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); margin-bottom: 10px; }
+.subtitle { font-size: 1rem; letter-spacing: 4px; color: #b8b8d1; opacity: 0.9; }
+.card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 30px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); margin-bottom: 30px; }
+.preview-section { text-align: center; padding: 30px 20px; }
+.preview-icon { font-size: 4rem; margin-bottom: 20px; }
+.preview-title { font-size: 1.5rem; color: #d4af37; margin-bottom: 20px; letter-spacing: 3px; }
+.preview-desc { font-size: 1rem; color: #b8b8d1; line-height: 1.8; margin-bottom: 30px; }
+.feature-list { text-align: left; max-width: 500px; margin: 30px auto; }
+.feature-item { display: flex; align-items: flex-start; margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 10px; }
+.feature-icon { font-size: 1.5rem; margin-right: 15px; flex-shrink: 0; }
+.feature-text { flex: 1; }
+.feature-text h4 { color: #d4af37; margin-bottom: 5px; font-size: 1.1rem; }
+.feature-text p { color: #b8b8d1; font-size: 0.9rem; line-height: 1.6; }
+.price-section { text-align: center; margin: 40px 0; }
+.price { font-size: 3rem; color: #d4af37; font-weight: 500; margin: 20px 0; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+.price-desc { font-size: 0.9rem; color: #b8b8d1; margin-bottom: 30px; }
+.btn { width: 100%; max-width: 400px; padding: 18px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(184, 134, 11, 0.3)); border: 2px solid rgba(212, 175, 55, 0.5); border-radius: 15px; color: #d4af37; font-size: 1.2rem; font-weight: 500; letter-spacing: 4px; cursor: pointer; transition: all 0.3s ease; margin: 10px auto; display: block; text-decoration: none; text-align: center; }
+.btn:hover { background: linear-gradient(135deg, rgba(212, 175, 55, 0.5), rgba(184, 134, 11, 0.5)); transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3); }
+.btn-secondary { background: rgba(147, 112, 219, 0.2); border-color: rgba(147, 112, 219, 0.5); color: #b8b8d1; }
+.btn-secondary:hover { background: rgba(147, 112, 219, 0.3); }
+.sample-result { background: rgba(255, 255, 255, 0.03); border-radius: 15px; padding: 25px; margin: 30px 0; border-left: 4px solid rgba(212, 175, 55, 0.5); }
+.sample-result h4 { color: #d4af37; margin-bottom: 15px; font-size: 1.1rem; }
+.sample-result p { color: #b8b8d1; line-height: 1.8; font-size: 0.95rem; }
+.blur-text { filter: blur(5px); user-select: none; }
+.unlock-hint { text-align: center; margin-top: 20px; color: #d4af37; font-size: 1.1rem; letter-spacing: 2px; }
+.footer { text-align: center; margin-top: 50px; padding: 30px 0; color: rgba(224, 224, 224, 0.5); font-size: 0.9rem; }
+@media (max-width: 768px) { .title { font-size: 2rem; letter-spacing: 6px; } .card { padding: 30px 20px; } }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1 class="title">☾ 赛博神谕 ☾</h1>
+<p class="subtitle">✧ AI梦境解析 · 命运占卜 ✧</p>
+</div>
+
+<div class="card">
+<div class="preview-section">
+<div class="preview-icon">🔮</div>
+<h2 class="preview-title">✧ 解锁你的专属神谕报告 ✧</h2>
+<p class="preview-desc">
+基于荣格心理学和塔罗占卜<br/>
+为你生成个性化的深度解析报告
+</p>
+</div>
+
+<div class="feature-list">
+<div class="feature-item">
+<div class="feature-icon">☆</div>
+<div class="feature-text">
+<h4>星图/梦境意象</h4>
+<p>结合塔罗牌解读你的梦境象征意义，揭示潜意识中的深层信息</p>
+</div>
+</div>
+
+<div class="feature-item">
+<div class="feature-icon">☾</div>
+<div class="feature-text">
+<h4>命运涟漪/心理映射</h4>
+<p>从心理学角度分析你当前的人生阶段和内在状态</p>
+</div>
+</div>
+
+<div class="feature-item">
+<div class="feature-icon">🔮</div>
+<div class="feature-text">
+<h4>神谕指引（重点）</h4>
+<p>根据你的年龄、状态、关注领域，提供具体可执行的行动建议</p>
+</div>
+</div>
+</div>
+
+<div class="sample-result">
+<h4>🎯 指引示例（职场新人 × 事业发展）</h4>
+<p class="blur-text">
+职场新人最容易犯的错误是急于证明自己。
+
+给你的建议：
+· 前3个月：多观察、多提问、少表现
+· 找一个靠谱的mentor，定期请教
+· 把每个任务当作学习机会，而非负担
+· 建立自己的知识管理系统
+· 下班后每周至少学习5小时
+</p>
+<div class="unlock-hint">🔒 解锁查看完整内容</div>
+</div>
+
+<div class="price-section">
+<div class="price">¥9.9</div>
+<p class="price-desc">一次占卜 · 终身回看 · 专属兑换码</p>
+<a href="#" class="btn" onclick="showPurchaseInfo(); return false;">
+立即购买 ✧
+</a>
+<a href="占卜页面-付费完整版.html" class="btn btn-secondary">
+已有兑换码？直接使用 →
+</a>
+</div>
+</div>
+
+<div class="card" id="purchaseInfo" style="display: none;">
+<div class="preview-section">
+<div class="preview-icon">💳</div>
+<h2 class="preview-title">✧ 购买方式 ✧</h2>
+<p class="preview-desc" style="text-align: left; max-width: 500px; margin: 20px auto;">
+<strong style="color: #d4af37;">方式1：小红书私信购买</strong><br/>
+1. 在小红书搜索"赛博神谕"<br/>
+2. 找到官方账号并私信"购买"<br/>
+3. 支付9.9元后获得专属兑换码<br/>
+4. 返回页面输入兑换码查看结果<br/><br/>
+
+<strong style="color: #d4af37;">方式2：微信扫码购买</strong><br/>
+1. 扫描下方二维码添加客服<br/>
+2. 发送"购买占卜"<br/>
+3. 支付后立即获得兑换码<br/>
+4. 返回页面输入兑换码<br/><br/>
+
+<strong style="color: #d4af37;">方式3：直接转账</strong><br/>
+微信/支付宝转账9.9元<br/>
+备注：占卜+你的微信号<br/>
+客服会在5分钟内发送兑换码
+</p>
+<button class="btn" onclick="copyContact()">复制客服微信号</button>
+<p style="text-align: center; margin-top: 15px; color: #b8b8d1; font-size: 0.9rem;">
+客服微信：<span id="wechatId" style="color: #d4af37;">your_wechat_id</span>
+</p>
+</div>
+</div>
+
+<footer class="footer">
+<p>✧ 命运由你书写，神谕仅为指引 ✧</p>
+<p style="margin-top: 10px; font-size: 0.85rem;">
+已有 <span style="color: #d4af37;">1,234</span> 人获得神谕指引
+</p>
+</footer>
+</div>
+
+<script>
+function showPurchaseInfo() {
+    document.getElementById('purchaseInfo').style.display = 'block';
+    document.getElementById('purchaseInfo').scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyContact() {
+    const wechatId = document.getElementById('wechatId').textContent;
+    navigator.clipboard.writeText(wechatId).then(() => {
+        alert('✅ 客服微信号已复制：' + wechatId + '\n\n请打开微信添加好友');
+    }).catch(() => {
+        alert('客服微信号：' + wechatId + '\n\n请手动复制');
+    });
+}
+</script>
+</body>
+</html>

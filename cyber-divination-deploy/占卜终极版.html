@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✧ 赛博神谕 · 梦境解析 ✧</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; overflow-x: hidden; min-height: 100vh; background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); color: #e0e0e0; position: relative; }
+#starsCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.container { position: relative; z-index: 1; max-width: 650px; margin: 0 auto; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+.header { text-align: center; margin: 40px 0 30px; animation: fadeInDown 1s ease-out; }
+.title { font-size: 2.5rem; font-weight: 300; letter-spacing: 8px; color: #d4af37; text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); margin-bottom: 10px; }
+.subtitle { font-size: 1rem; letter-spacing: 4px; color: #b8b8d1; opacity: 0.9; }
+.card { width: 100%; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 30px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); animation: fadeInUp 1s ease-out; }
+.crystal-ball { width: 200px; height: 200px; margin: 0 auto 40px; position: relative; perspective: 1000px; }
+.ball-inner { width: 100%; height: 100%; position: relative; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(147, 112, 219, 0.8) 0%, rgba(138, 43, 226, 0.6) 40%, rgba(75, 0, 130, 0.4) 100%); box-shadow: inset -25px -25px 40px rgba(0, 0, 0, 0.5), inset 25px 25px 40px rgba(255, 255, 255, 0.1), 0 0 60px rgba(147, 112, 219, 0.6); animation: breathe 4s ease-in-out infinite; transform-style: preserve-3d; }
+.ball-shine { position: absolute; top: 20%; left: 25%; width: 60px; height: 60px; background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%); border-radius: 50%; filter: blur(10px); animation: shimmer 3s ease-in-out infinite; }
+.ball-glow { position: absolute; inset: -20px; border-radius: 50%; background: radial-gradient(circle, rgba(147, 112, 219, 0.4) 0%, transparent 70%); filter: blur(20px); animation: pulse 4s ease-in-out infinite; }
+.ball-shadow { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); width: 150px; height: 20px; background: radial-gradient(ellipse, rgba(0, 0, 0, 0.5) 0%, transparent 70%); filter: blur(10px); }
+.step-indicator { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+.step-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(212, 175, 55, 0.3); transition: all 0.3s ease; position: relative; }
+.step-dot.active { background: rgba(212, 175, 55, 0.9); box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); transform: scale(1.3); }
+.step-dot::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.8); opacity: 0; transition: opacity 0.3s; }
+.step-dot.active::after { opacity: 1; }
+.form-step { display: none; }
+.form-step.active { display: block; animation: fadeInUp 0.5s ease-out; }
+.section-title { font-size: 1.1rem; color: #d4af37; margin-bottom: 20px; letter-spacing: 2px; text-align: center; }
+.input-section { margin-bottom: 25px; }
+.input-label { display: block; font-size: 1rem; color: #d4af37; margin-bottom: 15px; letter-spacing: 2px; text-align: center; }
+.dream-input { width: 100%; min-height: 150px; padding: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 15px; color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; resize: vertical; font-family: inherit; transition: all 0.3s ease; }
+.dream-input:focus { outline: none; border-color: rgba(212, 175, 55, 0.6); background: rgba(255, 255, 255, 0.08); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+.dream-input::placeholder { color: rgba(224, 224, 224, 0.4); }
+.char-count { text-align: right; font-size: 0.85rem; color: rgba(224, 224, 224, 0.5); margin-top: 8px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+.form-group { margin-bottom: 15px; }
+.form-label { display: block; font-size: 0.9rem; color: #b8b8d1; margin-bottom: 8px; letter-spacing: 1px; }
+.form-input, .form-select { width: 100%; padding: 12px 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 10px; color: #e0e0e0; font-size: 0.95rem; font-family: inherit; transition: all 0.3s ease; }
+.form-input:focus, .form-select:focus { outline: none; border-color: rgba(212, 175, 55, 0.6); background: rgba(255, 255, 255, 0.08); box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); }
+.form-select { cursor: pointer; }
+.form-select option { background: #24243e; color: #e0e0e0; }
+.tarot-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 30px 0; perspective: 1000px; }
+.tarot-card { aspect-ratio: 2/3; position: relative; cursor: pointer; transform-style: preserve-3d; transition: transform 0.6s; }
+.tarot-card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s; }
+.tarot-card.flipped .tarot-card-inner { transform: rotateY(180deg); }
+.tarot-card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+.tarot-card-front { background: linear-gradient(135deg, rgba(75, 0, 130, 0.6), rgba(138, 43, 226, 0.6)); border: 2px solid rgba(212, 175, 55, 0.4); }
+.tarot-card-back { background: linear-gradient(135deg, rgba(147, 112, 219, 0.3), rgba(138, 43, 226, 0.3)); border: 2px solid rgba(212, 175, 55, 0.4); transform: rotateY(180deg); }
+.tarot-card:hover { transform: translateY(-10px) scale(1.05); }
+.tarot-card.selected .tarot-card-back { border-color: #d4af37; background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), rgba(184, 134, 11, 0.4)); box-shadow: 0 0 30px rgba(212, 175, 55, 0.6); }
+.audio-control { position: fixed; top: 20px; right: 20px; z-index: 1000; width: 50px; height: 50px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; }
+.audio-control:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(212, 175, 55, 0.6); transform: scale(1.1); }
+.audio-control.muted { opacity: 0.5; }
+.countdown { text-align: center; font-size: 3rem; color: #d4af37; margin: 40px 0; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); animation: pulse-text 1s ease-in-out infinite; }
+.meditation-text { text-align: center; font-size: 1.1rem; color: #b8b8d1; line-height: 1.8; margin: 20px 0; letter-spacing: 2px; }
+.btn-wrapper { position: relative; margin-top: 20px; }
+.submit-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(184, 134, 11, 0.3)); border: 2px solid rgba(212, 175, 55, 0.5); border-radius: 15px; color: #d4af37; font-size: 1.1rem; font-weight: 500; letter-spacing: 4px; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+.submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.submit-btn:not(:disabled):hover { background: linear-gradient(135deg, rgba(212, 175, 55, 0.5), rgba(184, 134, 11, 0.5)); transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3); }
+.submit-btn.active { animation: goldenGlow 1.5s ease-in-out infinite; box-shadow: 0 0 30px rgba(212, 175, 55, 0.8), 0 0 60px rgba(212, 175, 55, 0.4); }
+.btn-text { position: relative; z-index: 1; }
+.btn-icon { margin-left: 10px; display: inline-block; animation: rotate 3s linear infinite; }
+.btn-hint { text-align: center; margin-top: 12px; font-size: 0.9rem; letter-spacing: 2px; transition: all 0.3s ease; min-height: 24px; }
+.btn-hint.disabled { color: rgba(212, 175, 55, 0.6); }
+.btn-hint.ready { color: rgba(212, 175, 55, 0.9); animation: pulse-text 2s ease-in-out infinite; }
+.result-section { width: 100%; margin-top: 30px; animation: fadeInUp 0.8s ease-out; }
+.result-section.hidden { display: none; }
+.result-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 30px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
+.result-header h2 { text-align: center; font-size: 1.8rem; font-weight: 300; letter-spacing: 6px; color: #d4af37; margin-bottom: 10px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+.result-subtitle { text-align: center; font-size: 0.95rem; color: #b8b8d1; margin-bottom: 30px; letter-spacing: 2px; }
+.section { margin-bottom: 30px; }
+.section-title-result { font-size: 1.2rem; font-weight: 400; letter-spacing: 3px; color: #b8b8d1; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(212, 175, 55, 0.3); }
+.section-content { font-size: 1rem; line-height: 1.8; color: #e0e0e0; padding: 15px; background: rgba(255, 255, 255, 0.02); border-radius: 10px; white-space: pre-wrap; }
+.reset-btn { width: 100%; padding: 15px; background: rgba(147, 112, 219, 0.2); border: 1px solid rgba(147, 112, 219, 0.5); border-radius: 15px; color: #b8b8d1; font-size: 1rem; letter-spacing: 3px; cursor: pointer; transition: all 0.3s ease; margin-top: 20px; }
+.reset-btn:hover { background: rgba(147, 112, 219, 0.3); transform: translateY(-2px); }
+.footer { margin-top: auto; padding: 30px 0; text-align: center; color: rgba(224, 224, 224, 0.5); font-size: 0.9rem; letter-spacing: 2px; }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes breathe { 0%, 100% { transform: scale(1); box-shadow: inset -25px -25px 40px rgba(0, 0, 0, 0.5), inset 25px 25px 40px rgba(255, 255, 255, 0.1), 0 0 60px rgba(147, 112, 219, 0.6); } 50% { transform: scale(1.05); box-shadow: inset -25px -25px 40px rgba(0, 0, 0, 0.5), inset 25px 25px 40px rgba(255, 255, 255, 0.1), 0 0 80px rgba(147, 112, 219, 0.8); } }
+@keyframes shimmer { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes pulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.1); } }
+@keyframes goldenGlow { 0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(212, 175, 55, 0.3); } 50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.9), 0 0 80px rgba(212, 175, 55, 0.5); } }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes pulse-text { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+@media (max-width: 768px) { .title { font-size: 2rem; letter-spacing: 6px; } .subtitle { font-size: 0.9rem; letter-spacing: 3px; } .card { padding: 30px 20px; } .crystal-ball { width: 150px; height: 150px; } .result-card { padding: 30px 20px; } .form-row { grid-template-columns: 1fr; } .tarot-cards { grid-template-columns: repeat(3, 1fr); gap: 10px; } }
+</style>
+</head>
+<body>
+<canvas id="starsCanvas"></canvas>
+<div class="container">
+<div class="header">
+<h1 class="title">☾ 赛博神谕 ☾</h1>
+<p class="subtitle">✧ 梦境解析 · 命运占卜 ✧</p>
+</div>
+<div class="card">
+<div class="crystal-ball">
+<div class="ball-inner">
+<div class="ball-shine"></div>
+<div class="ball-glow"></div>
+</div>
+<div class="ball-shadow"></div>
+</div>
+<div class="step-indicator">
+<div class="step-dot active" data-step="1"></div>
+<div class="step-dot" data-step="2"></div>
+<div class="step-dot" data-step="3"></div>
+<div class="step-dot" data-step="4"></div>
+</div>
+
+<!-- 音频控制按钮 -->
+<div class="audio-control" id="audioControl" title="点击开启/关闭音效">
+<span id="audioIcon">🔊</span>
+</div>
+<!-- 步骤1: 梦境描述 -->
+<div class="form-step active" id="step1">
+<div class="input-section">
+<label class="input-label">🔮 诉说你的梦境或疑问</label>
+<textarea id="userInput" class="dream-input" placeholder="在此输入你的梦境、困惑或想要占卜的问题...&#10;&#10;例如：&#10;· 我梦见在无尽的海洋中漂浮&#10;· 最近感到迷茫，不知道未来的方向&#10;· 想知道这段关系的走向" maxlength="500"></textarea>
+<div class="char-count"><span id="charCount">0</span> / 500</div>
+</div>
+<div class="btn-wrapper">
+<button id="nextBtn1" class="submit-btn" disabled>
+<span class="btn-text">继续</span>
+<span class="btn-icon">→</span>
+</button>
+<div id="btnHint1" class="btn-hint disabled">✧ 请至少输入 10 个字 ✧</div>
+</div>
+</div>
+
+<!-- 步骤2: 个人信息（可选） -->
+<div class="form-step" id="step2">
+<p class="section-title">✧ 为了更精准的解析，请告诉我 ✧</p>
+<div class="form-row">
+<div class="form-group">
+<label class="form-label">年龄段</label>
+<select id="ageRange" class="form-select">
+<option value="">选择年龄段</option>
+<option value="18-25">18-25 岁</option>
+<option value="26-35">26-35 岁</option>
+<option value="36-45">36-45 岁</option>
+<option value="46-55">46-55 岁</option>
+<option value="56+">56 岁以上</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label">当前状态</label>
+<select id="lifeStatus" class="form-select">
+<option value="">选择状态</option>
+<option value="student">学生</option>
+<option value="职场新人">职场新人</option>
+<option value="职场老手">职场老手</option>
+<option value="创业者">创业者</option>
+<option value="自由职业">自由职业</option>
+<option value="退休">退休</option>
+</select>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">最关心的领域</label>
+<select id="concernArea" class="form-select">
+<option value="">选择领域</option>
+<option value="事业发展">事业发展</option>
+<option value="感情关系">感情关系</option>
+<option value="健康养生">健康养生</option>
+<option value="财富积累">财富积累</option>
+<option value="个人成长">个人成长</option>
+<option value="家庭和谐">家庭和谐</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label">最近的心境</label>
+<select id="mood" class="form-select">
+<option value="">选择心境</option>
+<option value="焦虑不安">焦虑不安</option>
+<option value="迷茫困惑">迷茫困惑</option>
+<option value="平静安宁">平静安宁</option>
+<option value="兴奋期待">兴奋期待</option>
+<option value="低落沮丧">低落沮丧</option>
+<option value="充满希望">充满希望</option>
+</select>
+</div>
+<div class="btn-wrapper">
+<button id="nextBtn2" class="submit-btn">
+<span class="btn-text">继续</span>
+<span class="btn-icon">→</span>
+</button>
+<div class="btn-hint" style="color: rgba(184, 184, 209, 0.7);">✧ 可选填，直接继续也可 ✧</div>
+</div>
+</div>
+
+<!-- 步骤3: 冥想准备 -->
+<div class="form-step" id="step3">
+<p class="section-title">✧ 占卜仪式 ✧</p>
+<p class="meditation-text">请在心中默念你的问题<br/>让意识与潜意识连接</p>
+<div class="countdown" id="countdown">10</div>
+<p class="meditation-text" style="font-size: 0.9rem; opacity: 0.7;">倒计时结束后自动进入下一步</p>
+</div>
+
+<!-- 步骤4: 选择塔罗牌 -->
+<div class="form-step" id="step4">
+<p class="section-title">✧ 请凭直觉选择一张牌 ✧</p>
+<div class="tarot-cards">
+<div class="tarot-card" data-card="1">
+<div class="tarot-card-inner">
+<div class="tarot-card-face tarot-card-front">✦</div>
+<div class="tarot-card-face tarot-card-back">🌙</div>
+</div>
+</div>
+<div class="tarot-card" data-card="2">
+<div class="tarot-card-inner">
+<div class="tarot-card-face tarot-card-front">✦</div>
+<div class="tarot-card-face tarot-card-back">⭐</div>
+</div>
+</div>
+<div class="tarot-card" data-card="3">
+<div class="tarot-card-inner">
+<div class="tarot-card-face tarot-card-front">✦</div>
+<div class="tarot-card-face tarot-card-back">☀️</div>
+</div>
+</div>
+</div>
+<div class="btn-wrapper">
+<button id="submitBtn" class="submit-btn" disabled>
+<span class="btn-text">触碰命运</span>
+<span class="btn-icon">✧</span>
+</button>
+<div id="btnHint4" class="btn-hint disabled">✧ 请选择一张牌 ✧</div>
+</div>
+</div>
+</div>
+
+<!-- 结果展示区域 -->
+<div id="resultSection" class="result-section hidden">
+<div class="result-card">
+<div class="result-header">
+<h2>✧ 神谕启示 ✧</h2>
+<p class="result-subtitle" id="resultSubtitle"></p>
+</div>
+<div class="result-content">
+<div class="section">
+<h3 class="section-title-result">☆ 星图/梦境意象 ☆</h3>
+<div id="imagery" class="section-content"></div>
+</div>
+<div class="section">
+<h3 class="section-title-result">☾ 命运涟漪/心理映射 ☾</h3>
+<div id="mapping" class="section-content"></div>
+</div>
+<div class="section">
+<h3 class="section-title-result">🔮 神谕指引 🔮</h3>
+<div id="guidance" class="section-content"></div>
+</div>
+</div>
+<button id="resetBtn" class="reset-btn">再次占卜 ✧</button>
+</div>
+</div>
+
+<footer class="footer">
+<p>✧ 命运由你书写，神谕仅为指引 ✧</p>
+</footer>
+</div>
+
+<script>
+// 音效管理器
+class SoundManager {
+    constructor() {
+        this.enabled = true;
+        this.sounds = {};
+        this.initSounds();
+    }
+    
+    initSounds() {
+        // 使用 Web Audio API 生成音效
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    
+    playClick() {
+        if (!this.enabled) return;
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.1);
+    }
+    
+    playFlip() {
+        if (!this.enabled) return;
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(800, this.audioContext.currentTime + 0.2);
+        oscillator.type = 'triangle';
+        gainNode.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.2);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.2);
+    }
+    
+    playSuccess() {
+        if (!this.enabled) return;
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.setValueAtTime(523.25, this.audioContext.currentTime);
+        oscillator.frequency.setValueAtTime(659.25, this.audioContext.currentTime + 0.1);
+        oscillator.frequency.setValueAtTime(783.99, this.audioContext.currentTime + 0.2);
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.3);
+    }
+    
+    playMagic() {
+        if (!this.enabled) return;
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.setValueAtTime(1000, this.audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(2000, this.audioContext.currentTime + 0.5);
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.5);
+    }
+    
+    toggle() {
+        this.enabled = !this.enabled;
+        return this.enabled;
+    }
+}
+
+// 打字机效果
+class TypeWriter {
+    constructor(element, speed = 30) {
+        this.element = element;
+        this.speed = speed;
+        this.isTyping = false;
+    }
+    
+    async type(text) {
+        this.isTyping = true;
+        this.element.textContent = '';
+        const chars = text.split('');
+        
+        for (let i = 0; i < chars.length; i++) {
+            if (!this.isTyping) break;
+            this.element.textContent += chars[i];
+            await this.delay(this.speed);
+        }
+        
+        this.isTyping = false;
+    }
+    
+    stop() {
+        this.isTyping = false;
+    }
+    
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+}
+
+// 流星效果
+class ShootingStars {
+    constructor() {
+        this.canvas = document.getElementById('starsCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.stars = [];
+        this.shootingStars = [];
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.init();
+        this.animate();
+    }
+    
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+    
+    init() {
+        for (let i = 0; i < 100; i++) {
+            this.stars.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                size: Math.random() * 2,
+                opacity: Math.random() * 0.5 + 0.3,
+                twinkleSpeed: Math.random() * 0.02 + 0.01
+            });
+        }
+    }
+    
+    createShootingStar() {
+        if (Math.random() < 0.01) {
+            this.shootingStars.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height * 0.5,
+                length: Math.random() * 80 + 40,
+                speed: Math.random() * 3 + 2,
+                opacity: 1,
+                angle: Math.PI / 4
+            });
+        }
+    }
+    
+    drawStars() {
+        this.stars.forEach(star => {
+            this.ctx.beginPath();
+            this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+            this.ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+            this.ctx.fill();
+            star.opacity += star.twinkleSpeed;
+            if (star.opacity > 0.8 || star.opacity < 0.3) {
+                star.twinkleSpeed *= -1;
+            }
+        });
+    }
+    
+    drawShootingStars() {
+        this.shootingStars = this.shootingStars.filter(star => {
+            const gradient = this.ctx.createLinearGradient(
+                star.x, star.y,
+                star.x + Math.cos(star.angle) * star.length,
+                star.y + Math.sin(star.angle) * star.length
+            );
+            gradient.addColorStop(0, `rgba(255, 255, 255, ${star.opacity})`);
+            gradient.addColorStop(0.5, `rgba(147, 112, 219, ${star.opacity * 0.6})`);
+            gradient.addColorStop(1, 'rgba(147, 112, 219, 0)');
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = gradient;
+            this.ctx.lineWidth = 2;
+            this.ctx.moveTo(star.x, star.y);
+            this.ctx.lineTo(
+                star.x + Math.cos(star.angle) * star.length,
+                star.y + Math.sin(star.angle) * star.length
+            );
+            this.ctx.stroke();
+            star.x += Math.cos(star.angle) * star.speed;
+            star.y += Math.sin(star.angle) * star.speed;
+            star.opacity -= 0.01;
+            return star.opacity > 0 && star.x < this.canvas.width && star.y < this.canvas.height;
+        });
+    }
+    
+    animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawStars();
+        this.createShootingStar();
+        this.drawShootingStars();
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+// AI 占卜逻辑（增强版 - 更具体的指引）
+class DivinationAI {
+    constructor() {
+        this.templates = {
+            imagery: {
+                base: [
+                    "在命运的星图中，我看到了$*$一颗紫色的星辰$*$正在缓缓升起。",
+                    "梦境的意象如同$*$水面的涟漪$*$，层层扩散。",
+                    "在荣格的集体无意识海洋中，你的梦境呈现出$*$蝴蝶破茧$*$的原型意象。",
+                    "星图显示，$*$月相正处于盈亏交替之际$*$，这是一个充满可能性的时刻。"
+                ],
+                tarot: {
+                    "1": "月亮牌显示，你正处于$*$直觉觉醒$*$的阶段。潜意识中有些东西正在浮现，不要忽视那些看似不合逻辑的感受。",
+                    "2": "星星牌昭示，$*$希望之光$*$即将照亮你的道路。你所期待的转机，会在你坚持到最后一刻时出现。",
+                    "3": "太阳牌预示，$*$光明与活力$*$正在向你涌来。是时候走出阴影，让世界看到真实的你。"
+                }
+            },
+            mapping: {
+                base: [
+                    "从心理学的视角来看，这个梦境映射了你潜意识中的深层思考。",
+                    "命运的涟漪告诉我，你正处于一个$*$内在整合$*$的阶段。",
+                    "这个困惑并非偶然，它是你的$*$阴影自我$*$在呼唤整合。"
+                ],
+                mood: {
+                    "焦虑不安": "你的焦虑源于对未知的恐惧。但我看到，这恰恰是$*$突破的前兆$*$。焦虑说明你在乎，在乎就有动力改变。",
+                    "迷茫困惑": "迷茫是灵魂在$*$重新校准方向$*$。你不是失去了目标，而是旧的目标已经不再适合现在的你。给自己一些时间，新的方向会自然浮现。",
+                    "平静安宁": "你的平静来自内在的$*$智慧觉醒$*$。这份平静不是逃避，而是你已经学会了与不确定性共处。继续保持这份觉知。",
+                    "兴奋期待": "你的期待蕴含着$*$创造的能量$*$。但要小心，过度的期待可能变成压力。享受过程，而非只盯着结果。",
+                    "低落沮丧": "低落是灵魂在$*$蓄积力量$*$。就像种子在土壤中沉默，是为了破土而出。你现在经历的，是转化前的必经之路。",
+                    "充满希望": "你的希望是$*$宇宙的回应$*$。当你真心渴望某件事时，整个宇宙都会联合起来帮助你。保持这份信念，同时脚踏实地行动。"
+                },
+                ageRange: {
+                    "18-25": "在这个探索自我的年纪，你正在经历$*$身份认同$*$的关键期。不要急于定义自己，多尝试、多体验。",
+                    "26-35": "这是$*$建立根基$*$的黄金十年。你的选择会影响未来20年，但也不要因此而过度焦虑。",
+                    "36-45": "你正处于$*$人生的中场$*$。这是重新审视和调整的时机，不是终点，而是新起点。",
+                    "46-55": "这是$*$智慧沉淀$*$的阶段。你的经验是宝贵的资产，是时候传承和分享了。",
+                    "56+": "你已经走过了人生的大部分旅程，现在是$*$收获与享受$*$的时候。放下执念，活在当下。"
+                }
+            },
+            guidance: {
+                career: {
+                    "student": [
+                        "作为学生，你最大的资本是$*$时间和可能性$*$。\n\n具体建议：\n· 这周找一个你感兴趣领域的前辈聊30分钟\n· 每天花1小时学习课本之外的技能\n· 加入一个社团或项目组，实践比理论更重要\n· 不要害怕试错，现在犯错的成本最低",
+                        "学生时代最重要的不是成绩，而是$*$找到自己的热情所在$*$。\n\n行动清单：\n· 列出3件让你忘记时间的事情\n· 本月尝试一个从未做过的新事物\n· 找到一位导师（不一定是老师）\n· 开始记录你的想法和灵感",
+                        "大学是$*$试错成本最低的时期$*$，大胆尝试。\n\n这学期行动：\n· 选一门完全陌生的选修课\n· 参加一次实习，了解真实职场\n· 建立个人作品集（不管什么专业）\n· 每周和不同专业的同学交流\n· 记住：学历是敲门砖，能力才是通行证",
+                        "学生阶段要培养的是$*$学习能力，而非知识本身$*$。\n\n本月目标：\n· 学会使用一个专业工具（PS/Excel/Python）\n· 参加一次演讲或辩论，锻炼表达\n· 阅读行业大牛的传记或访谈\n· 建立时间管理系统\n· 记住：自律给你自由",
+                        "现在的每一个选择都在$*$塑造未来的你$*$。\n\n行动指南：\n· 明确毕业后的3个可能方向\n· 考一个有含金量的证书\n· 培养一个能坚持一辈子的爱好\n· 学会理财，从记账开始\n· 记住：优秀是一种习惯"
+                    ],
+                    "职场新人": [
+                        "职场新人最容易犯的错误是$*$急于证明自己$*$。\n\n给你的建议：\n· 前3个月：多观察、多提问、少表现\n· 找一个靠谱的mentor，定期请教\n· 把每个任务当作学习机会，而非负担\n· 建立自己的知识管理系统\n· 下班后每周至少学习5小时",
+                        "新人期是$*$打基础的关键期$*$，不要着急。\n\n这个月开始：\n· 每天记录工作中学到的一件事\n· 主动承担一个小项目，从头到尾负责\n· 和不同部门的同事吃一次饭\n· 阅读行业内的经典书籍\n· 培养一个工作之外的爱好",
+                        "入职第一年要建立的是$*$职业信用$*$。\n\n信用清单：\n· 承诺的事情一定做到，做不到就别承诺\n· 主动汇报进度，让领导放心\n· 遇到问题先想解决方案再求助\n· 保持谦虚，但不要妄自菲薄\n· 记住：靠谱比聪明更重要",
+                        "职场前三年决定了$*$你的职业天花板$*$。\n\n这周开始：\n· 研究公司里升职快的人做对了什么\n· 学习一项能让你脱颖而出的技能\n· 建立个人品牌（内部分享/写文章）\n· 扩展人脉，但要真诚\n· 记住：机会留给有准备的人",
+                        "新人最大的优势是$*$可以犯错和提问$*$。\n\n充分利用：\n· 不懂就问，但问之前先思考\n· 主动要求参与重要项目\n· 观察高手的工作方法\n· 建立反馈循环，快速迭代\n· 记住：成长速度决定职业高度"
+                    ],
+                    "职场老手": [
+                        "作为职场老手，你面临的是$*$突破瓶颈$*$的挑战。\n\n突破方向：\n· 从执行者转向管理者/专家\n· 这个季度培养一个新人，教学相长\n· 总结你的方法论，形成可复制的经验\n· 考虑跨界学习，打破思维定式\n· 评估是否需要换个赛道",
+                        "你已经积累了足够的经验，现在需要$*$战略性思考$*$。\n\n接下来30天：\n· 写下你的3年职业规划\n· 识别你的核心竞争力和短板\n· 建立个人品牌（写作/演讲/分享）\n· 拓展高质量的人脉圈\n· 考虑副业或投资的可能性",
+                        "职场中期最危险的是$*$温水煮青蛙$*$。\n\n警醒行动：\n· 评估你的技能是否还有竞争力\n· 每季度学习一个新领域的知识\n· 主动寻求更大的挑战\n· 建立被动收入渠道\n· 记住：不进则退，停止学习就是退步",
+                        "现在是$*$从专业到管理$*$的转型期。\n\n转型建议：\n· 学习管理和领导力课程\n· 培养系统思维，看到全局\n· 提升沟通和影响力\n· 建立自己的人才梯队\n· 记住：管理者的价值在于成就他人",
+                        "职场老手要思考的是$*$如何创造更大价值$*$。\n\n价值升级：\n· 从做事到做局，提升格局\n· 成为行业专家，建立影响力\n· 输出你的经验（培训/咨询/写书）\n· 投资年轻人，建立人脉网络\n· 记住：真正的高手是让别人成功"
+                    ],
+                    "创业者": [
+                        "创业最大的挑战是$*$在不确定中保持方向$*$。\n\n生存法则：\n· 现金流比利润更重要，时刻关注账上的钱\n· 这周至少和3个客户深度交流\n· 快速试错，小步快跑\n· 找到你的核心用户，服务好他们\n· 保持身体健康，创业是马拉松",
+                        "创业是$*$反人性的修行$*$，需要极强的自律。\n\n本月重点：\n· 验证你的核心假设，用数据说话\n· 组建或优化团队，找到互补的伙伴\n· 建立用户反馈机制\n· 每周复盘，调整策略\n· 留出时间思考，不要只顾埋头干活",
+                        "创业初期要解决的是$*$从0到1的问题$*$。\n\n破局关键：\n· 找到一个真实存在的痛点\n· 做出最小可行产品（MVP）\n· 这个月至少获得10个付费用户\n· 收集反馈，快速迭代\n· 记住：完成比完美更重要",
+                        "创业者最稀缺的是$*$专注力$*$。\n\n专注策略：\n· 只做一件事，做到极致\n· 拒绝90%的机会，聚焦核心\n· 每天3小时深度工作时间\n· 远离无效社交和会议\n· 记住：战略就是选择不做什么",
+                        "创业成功的关键是$*$找到可复制的商业模式$*$。\n\n模式验证：\n· 测试不同的获客渠道\n· 计算单位经济模型（LTV > CAC）\n· 建立标准化流程\n· 培养第二梯队，解放自己\n· 记住：能规模化才能做大"
+                    ],
+                    "自由职业": [
+                        "自由职业的核心是$*$自我管理和持续获客$*$。\n\n实战建议：\n· 建立个人品牌，让客户主动找你\n· 这个月至少拓展2个新客户渠道\n· 提高单价，而非增加工作量\n· 建立被动收入（课程/产品/版权）\n· 强制储蓄，应对收入波动",
+                        "自由职业最大的敌人是$*$孤独和懈怠$*$。\n\n行动计划：\n· 加入一个自由职业者社群\n· 设定每日工作时间，保持规律\n· 每周至少一次社交活动\n· 持续学习，保持竞争力\n· 定期评估业务模式，优化收入结构",
+                        "自由职业要建立的是$*$个人商业系统$*$。\n\n系统搭建：\n· 标准化服务流程，提高效率\n· 建立作品集网站，展示实力\n· 设计3个不同价位的产品包\n· 培养长期客户，减少获客成本\n· 记住：系统化才能可持续",
+                        "自由职业的终极目标是$*$时间自由和财务自由$*$。\n\n自由之路：\n· 从按时间收费到按价值收费\n· 开发可以规模化的产品\n· 建立自动化营销系统\n· 投资理财，让钱生钱\n· 记住：真正的自由来自选择权",
+                        "自由职业者要避免的是$*$用战术的勤奋掩盖战略的懒惰$*$。\n\n战略思考：\n· 每季度审视业务方向\n· 识别高价值客户和项目\n· 学会说不，保护时间\n· 投资个人成长，而非只顾赚钱\n· 记住：方向比努力更重要"
+                    ],
+                    "退休": [
+                        "退休不是结束，而是$*$人生新篇章的开始$*$。\n\n享受生活：\n· 做那些一直想做但没时间做的事\n· 培养一个新爱好（绘画/音乐/园艺）\n· 保持社交，孤独是健康的大敌\n· 适度运动，身体是革命的本钱\n· 考虑做志愿者，分享你的经验",
+                        "这是$*$收获与传承$*$的时期。\n\n建议：\n· 整理你的人生故事，留给后代\n· 和老朋友保持联系\n· 学习新技术，保持与时代的连接\n· 旅行，看看这个世界\n· 关注健康，定期体检",
+                        "退休后最重要的是$*$找到新的生活意义$*$。\n\n意义探索：\n· 发展一直想做的事业或爱好\n· 参加社区活动，贡献智慧\n· 学习新知识，保持大脑活跃\n· 享受天伦之乐，陪伴家人\n· 记住：年龄只是数字，心态决定状态",
+                        "退休是$*$重新定义自己$*$的机会。\n\n新生活：\n· 不要被"退休"这个词限制\n· 做自己真正热爱的事\n· 保持好奇心和学习力\n· 建立新的社交圈\n· 记住：最好的时光永远是现在",
+                        "这个阶段要关注的是$*$生活质量而非数量$*$。\n\n品质生活：\n· 培养健康的生活习惯\n· 追求精神层面的满足\n· 和重要的人共度时光\n· 做让自己快乐的事\n· 记住：活在当下，享受每一天"
+                    ]
+                },
+                relationship: [
+                    "关于感情，最重要的是$*$先成为完整的自己$*$。\n\n这周开始：\n· 列出你在关系中真正需要的3件事\n· 学会表达需求，而非期待对方猜测\n· 给彼此独立的空间\n· 每周至少一次深度对话（不是闲聊）\n· 记住：你不需要完美的关系，只需要真实的连接",
+                    "感情的本质是$*$两个独立灵魂的相遇$*$。\n\n实践建议：\n· 不要试图改变对方，接纳差异\n· 冲突时先处理情绪，再解决问题\n· 保持新鲜感：每月尝试一件新事物\n· 学会道歉和原谅\n· 记住：好的关系是相互成就，而非相互消耗",
+                    "爱情不是寻找完美的人，而是$*$学会用完美的眼光看待不完美的人$*$。\n\n本月行动：\n· 写下对方3个你欣赏的特质\n· 每天说一句真诚的赞美\n· 减少抱怨，增加感恩\n· 约会时放下手机，全心陪伴\n· 记住：关系需要经营，不是理所当然",
+                    "感情中最大的智慧是$*$知道何时坚持，何时放手$*$。\n\n思考清单：\n· 这段关系让你成为更好的自己了吗？\n· 你们的核心价值观是否一致？\n· 能否接受对方最真实的样子？\n· 是否愿意为这段关系成长？\n· 记住：爱是选择，不是感觉",
+                    "真正的亲密关系建立在$*$相互尊重和独立$*$之上。\n\n关系升级：\n· 保持个人成长，不要失去自我\n· 建立共同目标和梦想\n· 学会倾听，理解比对错更重要\n· 给予支持，而非控制\n· 记住：最好的爱情是并肩前行"
+                ],
+                health: [
+                    "健康是$*$一切的基础$*$，没有健康就没有未来。\n\n立即行动：\n· 今天开始：每天走10000步\n· 本周预约一次全面体检\n· 每天睡够7-8小时，不要熬夜\n· 戒掉一个坏习惯（烟/酒/糖）\n· 学习冥想或瑜伽，身心合一",
+                    "身体是灵魂的居所，$*$善待它$*$。\n\n健康计划：\n· 建立运动习惯，每周至少3次\n· 调整饮食，多吃蔬菜水果\n· 管理压力，学会放松\n· 定期体检，预防大于治疗\n· 保持乐观心态，情绪影响免疫力",
+                    "健康不是一切，但失去健康就会失去一切。$*$从今天开始改变$*$。\n\n本周目标：\n· 早睡早起，调整作息\n· 每天喝8杯水\n· 减少外卖，自己做饭\n· 找一个运动伙伴，互相监督\n· 记住：小习惯，大改变",
+                    "真正的健康是$*$身心灵的平衡$*$。\n\n全面提升：\n· 身体：每天30分钟运动\n· 心理：学会情绪管理\n· 社交：保持良好人际关系\n· 精神：找到生活的意义\n· 记住：健康是一种生活方式",
+                    "预防永远胜于治疗，$*$投资健康就是投资未来$*$。\n\n这个月：\n· 戒掉熬夜，11点前睡觉\n· 每周运动3-5次\n· 学习营养知识，科学饮食\n· 定期体检，了解身体状况\n· 记住：健康是最大的财富"
+                ],
+                wealth: [
+                    "财富的本质是$*$价值交换$*$，先创造价值。\n\n财富策略：\n· 这个月开始记账，了解钱的去向\n· 建立应急基金（6个月生活费）\n· 学习投资，让钱为你工作\n· 提升技能，增加收入来源\n· 延迟满足，区分想要和需要",
+                    "真正的财富是$*$时间自由$*$，而非数字。\n\n行动清单：\n· 评估你的时间价值\n· 减少无效消费，增加有效投资\n· 学习理财知识（每周1小时）\n· 建立被动收入渠道\n· 保持感恩，财富会流向感恩的人",
+                    "赚钱的能力来自$*$持续学习和价值创造$*$。\n\n本月计划：\n· 提升一项核心技能\n· 拓展人脉，机会来自连接\n· 尝试副业，多元化收入\n· 投资自己，这是最好的投资\n· 记住：能力配得上野心，财富才会来",
+                    "财务自由的关键是$*$开源节流，理性投资$*$。\n\n实战建议：\n· 收入的30%用于储蓄投资\n· 学习基金、股票等投资工具\n· 避免高风险投机\n· 建立多个收入来源\n· 记住：复利是世界第八大奇迹",
+                    "金钱是工具，不是目的。$*$用它创造你想要的生活$*$。\n\n财富思维：\n· 从消费者转变为投资者\n· 购买资产，而非负债\n· 学习富人的思维方式\n· 保持耐心，财富需要时间积累\n· 记住：财富自由是为了选择自由"
+                ],
+                growth: [
+                    "成长的本质是$*$突破舒适区$*$。\n\n成长计划：\n· 这个月读完一本好书\n· 学习一项新技能（编程/设计/语言）\n· 每天写100字日记，记录成长\n· 参加一个线下活动，拓展视野\n· 记住：舒适区外才有成长",技能（编程/设计/写作）\n· 每天写100字，记录思考\n· 找一个成长伙伴，互相监督\n· 接受挑战，失败是最好的老师",
+                    "真正的成长是$*$认知的升级$*$。\n\n实践建议：\n· 每周复盘，总结经验教训\n· 向不同领域的人学习\n· 培养批判性思维\n· 保持好奇心，永远像个孩子\n· 记住：成长是一辈子的事",
+                    "成长不是变成别人，而是$*$成为更好的自己$*$。\n\n本周开始：\n· 列出你的3个优势和3个短板\n· 每天学习30分钟\n· 走出舒适区，尝试新事物\n· 向你尊敬的人请教\n· 记住：每天进步一点点",
+                    "最好的投资是$*$投资自己的大脑$*$。\n\n学习清单：\n· 建立知识管理系统\n· 深度学习一个领域\n· 培养跨界思维\n· 输出倒逼输入（写作/分享）\n· 记住：学习能力决定未来",
+                    "成长的痛苦是暂时的，$*$不成长的痛苦是永久的$*$。\n\n行动计划：\n· 设定明确的成长目标\n· 找到你的导师或榜样\n· 加入学习型社群\n· 保持反思的习惯\n· 记住：改变从决定的那一刻开始"
+                ],
+                family: [
+                    "家庭和谐的关键是$*$理解和界限$*$。\n\n家庭智慧：\n· 这周和家人深度聊一次天\n· 学会倾听，不要急于评判\n· 尊重差异，每个人都有自己的路\n· 表达爱意，不要吝啬赞美\n· 建立家庭仪式（每周聚餐/每月旅行）",
+                    "家是$*$心灵的港湾$*$，需要用心经营。\n\n行动建议：\n· 给父母打个电话，聊聊近况\n· 和伴侣约会，重温恋爱的感觉\n· 陪孩子玩耍，放下手机\n· 处理家庭矛盾，不要冷战\n· 记住：家人是最重要的财富",
+                    "家庭关系的本质是$*$爱与责任$*$。\n\n本月重点：\n· 每天至少30分钟高质量陪伴\n· 学会表达感谢和欣赏\n· 共同制定家庭目标\n· 给予空间，保持界限\n· 记住：家和万事兴",
+                    "最好的家庭教育是$*$父母的言传身教$*$。\n\n家庭成长：\n· 以身作则，做孩子的榜样\n· 建立良好的沟通模式\n· 尊重每个成员的个性\n· 共同面对困难，增进感情\n· 记住：家庭是一个团队",
+                    "家庭幸福的秘诀是$*$接纳和包容$*$。\n\n实践建议：\n· 接受家人的不完美\n· 减少指责，增加理解\n· 建立家庭传统和回忆\n· 保持感恩的心\n· 记住：家是讲爱的地方，不是讲理的地方"
+                ]
+            }
+        };
+    }
+    
+    async analyze(userInput, userInfo) {
+        await this.delay(2000);
+        
+        const imagery = this.generateImagery(userInfo);
+        const mapping = this.generateMapping(userInfo);
+        const guidance = this.generateGuidance(userInfo);
+        
+        return {
+            imagery: this.enrichText(imagery),
+            mapping: this.enrichText(mapping),
+            guidance: this.enrichText(guidance),
+            subtitle: this.generateSubtitle(userInfo)
+        };
+    }
+    
+    generateImagery(userInfo) {
+        let text = this.getRandomTemplate(this.templates.imagery.base);
+        if (userInfo.tarotCard) {
+            text += " " + this.templates.imagery.tarot[userInfo.tarotCard];
+        }
+        return text;
+    }
+    
+    generateMapping(userInfo) {
+        let text = this.getRandomTemplate(this.templates.mapping.base);
+        
+        // 根据心境添加具体分析
+        if (userInfo.mood && this.templates.mapping.mood[userInfo.mood]) {
+            text += " " + this.templates.mapping.mood[userInfo.mood];
+        }
+        
+        // 根据年龄段添加人生阶段分析
+        if (userInfo.ageRange && this.templates.mapping.ageRange[userInfo.ageRange]) {
+            text += " " + this.templates.mapping.ageRange[userInfo.ageRange];
+        }
+        
+        return text;
+    }
+    
+    generateGuidance(userInfo) {
+        let guidance = "";
+        
+        // 调试信息（生产环境可删除）
+        console.log('用户信息:', {
+            concernArea: userInfo.concernArea,
+            lifeStatus: userInfo.lifeStatus,
+            mood: userInfo.mood,
+            ageRange: userInfo.ageRange
+        });
+        
+        // 根据关注领域和生活状态给出具体指引
+        if (userInfo.concernArea === "事业发展" && userInfo.lifeStatus) {
+            const careerGuidance = this.templates.guidance.career[userInfo.lifeStatus];
+            if (careerGuidance && Array.isArray(careerGuidance)) {
+                guidance = this.getRandomTemplate(careerGuidance);
+                console.log(`选择了事业发展-${userInfo.lifeStatus}模板，共${careerGuidance.length}个选项`);
+            }
+        } else if (userInfo.concernArea === "感情关系") {
+            guidance = this.getRandomTemplate(this.templates.guidance.relationship);
+            console.log(`选择了感情关系模板，共${this.templates.guidance.relationship.length}个选项`);
+        } else if (userInfo.concernArea === "健康养生") {
+            guidance = this.getRandomTemplate(this.templates.guidance.health);
+            console.log(`选择了健康养生模板，共${this.templates.guidance.health.length}个选项`);
+        } else if (userInfo.concernArea === "财富积累") {
+            guidance = this.getRandomTemplate(this.templates.guidance.wealth);
+            console.log(`选择了财富积累模板，共${this.templates.guidance.wealth.length}个选项`);
+        } else if (userInfo.concernArea === "个人成长") {
+            guidance = this.getRandomTemplate(this.templates.guidance.growth);
+            console.log(`选择了个人成长模板，共${this.templates.guidance.growth.length}个选项`);
+        } else if (userInfo.concernArea === "家庭和谐") {
+            guidance = this.getRandomTemplate(this.templates.guidance.family);
+            console.log(`选择了家庭和谐模板，共${this.templates.guidance.family.length}个选项`);
+        }
+        
+        // 如果没有匹配到具体指引，给通用建议（多个版本随机）
+        if (!guidance) {
+            const generalGuidance = [
+                "✧ 神谕的指引是：$*$顺应而非对抗$*$。\n\n本周行动：\n· 每天早晨冥想5分钟，倾听内心\n· 记录你的梦境和直觉\n· 做一件让未来的自己感激的事\n· 保持觉知，活在当下\n· 相信过程，一切都是最好的安排",
+                "🔮 命运之轮正在转动，方向盘在你手中。\n\n这个月开始：\n· 写下你最想实现的3个目标\n· 每天进步1%，一年后你会惊讶于自己的改变\n· 远离负能量的人和事\n· 培养一个让你快乐的爱好\n· 记住：改变从当下开始",
+                "☾ 月亮的智慧告诉我们：$*$黑暗并非终点，而是孕育光明的子宫$*$。\n\n接下来的日子：\n· 接纳当下的不完美\n· 每周至少一次深度思考\n· 向你尊敬的人学习\n· 保持感恩的心态\n· 相信：你正走在正确的路上",
+                "✧ 宇宙的讯息是：$*$你比自己想象的更强大$*$。\n\n立即行动：\n· 列出你的3个优势和1个需要改进的地方\n· 每天做一件让你害怕的小事\n· 建立支持你的社交圈\n· 学会说不，保护你的能量\n· 记住：你值得拥有美好的生活",
+                "🌟 星辰的启示：$*$每个结束都是新的开始$*$。\n\n当下行动：\n· 放下过去的遗憾，专注当下\n· 每天写下3件感恩的事\n· 尝试一件从未做过的事\n· 相信直觉，它比理性更懂你\n· 记住：生命是一场体验，不是考试"
+            ];
+            guidance = this.getRandomTemplate(generalGuidance);
+            console.log(`使用通用模板，共${generalGuidance.length}个选项`);
+        }
+        
+        return guidance;
+    }
+    
+    generateSubtitle(userInfo) {
+        const parts = [];
+        if (userInfo.ageRange) parts.push(userInfo.ageRange);
+        if (userInfo.lifeStatus) parts.push(userInfo.lifeStatus);
+        if (userInfo.concernArea) parts.push(`关注${userInfo.concernArea}`);
+        return parts.length > 0 ? parts.join(' · ') : '为你解析';
+    }
+    
+    getRandomTemplate(templates) {
+        if (Array.isArray(templates)) {
+            // 使用时间戳作为种子，确保每次访问都有不同的随机结果
+            const seed = Date.now() + Math.random();
+            const index = Math.floor((seed % templates.length));
+            return templates[index];
+        }
+        return templates;
+    }
+    
+    enrichText(text) {
+        return text.replace(/\$\*\$/g, (match, offset) => {
+            return offset % 2 === 0 ? '✧ ' : ' ✧';
+        });
+    }
+    
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+}
+
+// 主应用逻辑
+class DivinationApp {
+    constructor() {
+        this.currentStep = 1;
+        this.userInfo = {};
+        this.ai = new DivinationAI();
+        this.soundManager = new SoundManager();
+        this.minChars = 10;
+        this.initElements();
+        this.initEventListeners();
+        this.initAudioControl();
+    }
+    
+    initElements() {
+        this.userInput = document.getElementById('userInput');
+        this.charCount = document.getElementById('charCount');
+        this.nextBtn1 = document.getElementById('nextBtn1');
+        this.nextBtn2 = document.getElementById('nextBtn2');
+        this.submitBtn = document.getElementById('submitBtn');
+        this.resetBtn = document.getElementById('resetBtn');
+        this.btnHint1 = document.getElementById('btnHint1');
+        this.btnHint4 = document.getElementById('btnHint4');
+        this.countdown = document.getElementById('countdown');
+        this.resultSection = document.getElementById('resultSection');
+        this.resultSubtitle = document.getElementById('resultSubtitle');
+        this.imageryEl = document.getElementById('imagery');
+        this.mappingEl = document.getElementById('mapping');
+        this.guidanceEl = document.getElementById('guidance');
+        this.audioControl = document.getElementById('audioControl');
+        this.audioIcon = document.getElementById('audioIcon');
+    }
+    
+    initAudioControl() {
+        this.audioControl.addEventListener('click', () => {
+            const enabled = this.soundManager.toggle();
+            this.audioIcon.textContent = enabled ? '🔊' : '🔇';
+            this.audioControl.classList.toggle('muted', !enabled);
+            this.soundManager.playClick();
+        });
+    }
+    
+    initEventListeners() {
+        // 步骤1: 梦境输入
+        this.userInput.addEventListener('input', () => {
+            const length = this.userInput.value.length;
+            this.charCount.textContent = length;
+            if (length >= this.minChars) {
+                this.nextBtn1.disabled = false;
+                this.nextBtn1.classList.add('active');
+                this.btnHint1.textContent = '✧ 准备就绪，继续吧 ✧';
+                this.btnHint1.className = 'btn-hint ready';
+            } else {
+                this.nextBtn1.disabled = true;
+                this.nextBtn1.classList.remove('active');
+                const remaining = this.minChars - length;
+                this.btnHint1.textContent = `✧ 还需 ${remaining} 个字即可继续 ✧`;
+                this.btnHint1.className = 'btn-hint disabled';
+            }
+        });
+        
+        this.nextBtn1.addEventListener('click', () => {
+            this.soundManager.playClick();
+            this.userInfo.dream = this.userInput.value.trim();
+            this.goToStep(2);
+        });
+        
+        // 步骤2: 个人信息
+        this.nextBtn2.addEventListener('click', () => {
+            this.soundManager.playClick();
+            this.userInfo.ageRange = document.getElementById('ageRange').value;
+            this.userInfo.lifeStatus = document.getElementById('lifeStatus').value;
+            this.userInfo.concernArea = document.getElementById('concernArea').value;
+            this.userInfo.mood = document.getElementById('mood').value;
+            this.goToStep(3);
+            this.startCountdown();
+        });
+        
+        // 步骤4: 塔罗牌选择（带翻转效果）
+        document.querySelectorAll('.tarot-card').forEach(card => {
+            card.addEventListener('click', () => {
+                // 翻转所有卡片
+                document.querySelectorAll('.tarot-card').forEach(c => {
+                    c.classList.add('flipped');
+                });
+                
+                this.soundManager.playFlip();
+                
+                setTimeout(() => {
+                    // 选中当前卡片
+                    document.querySelectorAll('.tarot-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    this.userInfo.tarotCard = card.dataset.card;
+                    this.submitBtn.disabled = false;
+                    this.submitBtn.classList.add('active');
+                    this.btnHint4.textContent = '✧ 准备就绪，触碰命运吧 ✧';
+                    this.btnHint4.className = 'btn-hint ready';
+                    this.soundManager.playSuccess();
+                }, 600);
+            });
+        });
+        
+        this.submitBtn.addEventListener('click', () => this.handleSubmit());
+        this.resetBtn.addEventListener('click', () => this.reset());
+    }
+    
+    goToStep(step) {
+        this.soundManager.playMagic();
+        document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+        document.getElementById(`step${step}`).classList.add('active');
+        document.querySelectorAll('.step-dot').forEach((dot, index) => {
+            if (index < step) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+        this.currentStep = step;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    startCountdown() {
+        let count = 10;
+        this.countdown.textContent = count;
+        const timer = setInterval(() => {
+            count--;
+            this.countdown.textContent = count;
+            this.soundManager.playClick();
+            if (count <= 0) {
+                clearInterval(timer);
+                this.goToStep(4);
+            }
+        }, 1000);
+    }
+    
+    async handleSubmit() {
+        this.submitBtn.disabled = true;
+        this.submitBtn.classList.remove('active');
+        this.submitBtn.innerHTML = '<span class="btn-text">神谕降临中...</span><span class="btn-icon">✧</span>';
+        this.soundManager.playMagic();
+        
+        try {
+            const result = await this.ai.analyze(this.userInfo.dream, this.userInfo);
+            this.displayResult(result);
+        } catch (error) {
+            console.error('占卜失败:', error);
+            alert('神谕暂时无法降临，请稍后再试 ✧');
+            this.reset();
+        }
+    }
+    
+    async displayResult(result) {
+        this.resultSubtitle.textContent = result.subtitle;
+        
+        // 使用打字机效果显示结果
+        const typeWriter1 = new TypeWriter(this.imageryEl, 30);
+        const typeWriter2 = new TypeWriter(this.mappingEl, 30);
+        const typeWriter3 = new TypeWriter(this.guidanceEl, 30);
+        
+        document.querySelector('.card').style.display = 'none';
+        this.resultSection.classList.remove('hidden');
+        
+        setTimeout(() => {
+            this.resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+        
+        this.soundManager.playSuccess();
+        
+        // 依次显示三段内容
+        await typeWriter1.type(result.imagery);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await typeWriter2.type(result.mapping);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await typeWriter3.type(result.guidance);
+    }
+    
+    reset() {
+        this.soundManager.playClick();
+        this.currentStep = 1;
+        this.userInfo = {};
+        this.userInput.value = '';
+        this.charCount.textContent = '0';
+        this.nextBtn1.disabled = true;
+        this.nextBtn1.classList.remove('active');
+        this.btnHint1.textContent = '✧ 请至少输入 10 个字 ✧';
+        this.btnHint1.className = 'btn-hint disabled';
+        this.submitBtn.disabled = true;
+        this.submitBtn.classList.remove('active');
+        this.submitBtn.innerHTML = '<span class="btn-text">触碰命运</span><span class="btn-icon">✧</span>';
+        this.btnHint4.textContent = '✧ 请选择一张牌 ✧';
+        this.btnHint4.className = 'btn-hint disabled';
+        document.querySelectorAll('.tarot-card').forEach(c => {
+            c.classList.remove('selected');
+            c.classList.remove('flipped');
+        });
+        document.querySelectorAll('select').forEach(s => s.value = '');
+        this.resultSection.classList.add('hidden');
+        document.querySelector('.card').style.display = 'block';
+        this.goToStep(1);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    new ShootingStars();
+    new DivinationApp();
+});
+</script>
+</body>
+</html>
